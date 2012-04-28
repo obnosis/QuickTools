@@ -1,0 +1,719 @@
+(Originally published 10/2009 on Linux Gazette by Obnosis)
+
+(Slightly dated, as this uses BT4 Pre-Final and we are not using BT)
+Layer 8 Linux Security Backtrack4 Test Tools
+
+For Linux Users, Developers and Administrators
+
+In case you thought that most cracker attention was aimed at Layer 7
+Applications, we will go over just a few tools available from BackTrack 4
+that each Linux user, developer and professional needs to be aware of.
+
+Backtrack4 is a linux security distribution that includes state of the art
+test tools for users, developers and administrators, as well as security
+pentest and reverse engineering professionals. Backtrack4 can now share the
+repositories with Ubuntu, since both are developed upon Debian base.
+
+Many of the tools included within the Backtrack distribution are
+intentionally left in a semi-broken state to ensure use by professionals and
+pentesters who are assumed to be ethical by intelligence or experience. It
+is therefore suggested that a persistent USB key, VMware or full
+installation be used for network, administration and developer educational
+lab testing. Persistence allows tools to be repaired, ready for the next
+session.
+
+Setting up 
+BackTrack4<http://www.offensive-security.com/videos/backtrack-security-training-video/up-and-running-backtrack.html>
+
+------------------------------
+Command Line Skills:
+
+As with all linux, reading all the documentation included in README files
+and carefully examining all the scripts in each of the directories will
+serve anyone wishing to learn more about the Backtrack4 collection of tools.
+
+Command line skills cannot be stressed enough! This *is* the quick way to
+learn anything linux and absolutely required to use Backtrack4.
+
+------------------------------
+Network Testing / Information Gathering:
+
+ike-scan <http://www.nta-monitor.com/tools/ike-scan/>
+
+*We all know administrators and developers that are still using IKE or host
+to host IPSec or an incorrectly configured VPN?*
+
+ike-scan discovers IKE hosts and can also fingerprint using the
+retransmission backoff pattern, supporting both main mode and aggressive
+mode.
+
+Pskcrack, and nat-t as well as many other options: *man ike-scan*.
+
+ike-scan does two things:
+
+
+Discovery:  Determine which hosts are running IKE.  This is done by
+displaying those hosts which respond to the IKE requests sent by
+ike-scan.
+
+Fingerprinting: Determine which IKE implementation the hosts are
+using. There are several ways to do this:
+
+(a)  Backoff  fingerprinting
+ - recording the times of the IKE response packets from the target
+hosts and comparing the observed retransmission backâ€off pattern
+against known patterns.
+(b) vendor id fingerprinting
+ - matching the vendor-specific vendor IDs against  known  vendor ID patterns.
+(c) proprietary notify message codes.
+ - recording the times of the IKE response packets from the target
+hosts and comparing the observed retransmission back-off pattern
+against known patterns.
+(d) vendor id fingerprinting
+- matching the vendor-specific vendor IDs against  known  vendor ID
+patterns; and proprietary notify message codes.
+
+FILES:
+/usr/share/ike-scan/ike-backoff-patterns
+List of UDP  backoff  patterns. Used with:
+--showbackoff
+/usr/share/ike-scan/ike-vendor-ids
+List of known Vendor ID patterns.
+
+ ike-scan wiki <http://www.nta-monitor.com/wiki/>
+
+ike-scan <http://www.nta-monitor.com/tools/ike-scan/>
+
+DISABLED: Broken path to /usr/local/share called from /usr/share - symlink
+to fix.
+------------------------------
+
+lanmap <http://parseerror.com/lanmap/>
+
+*Need a nice map in a hurry, say to figure out a new network?*
+
+ Creates a fine lanmap in png, gif or svg.
+
+Usage: lanmap [options]
+Options:
+ -v ...................... verbose mode, up to 3 levels (-vv, -vvv)
+ -i [?|*wildcard*|iface] . interface to use; 'all' for all
+                            ?: list all interfaces and exit
+                            *3Com*: use the first NIC with "3Com" in it
+ -r # .................... generate a report every # seconds. default: 60
+ -D [#|all|raw] .......... debug mode, tons of output. use with caution.
+                            #: payload bytes to dump (default: 0)
+ -f str .................. traffic filter; libpcap syntax
+ -T [png|gif|svg] ........ output image format (default: png)
+ -e program .............. program to run to generate graph (default: twopi)
+ -o directory ............ map destination (default ./)
+ -V ...................... program version info
+ -h ...................... this handy help message
+
+ EXAMPLE:
+
+# lanmap -i eth0 -r 30 -T png -o /tmp/
+------------------------------
+
+reverseraider <http://complemento.sourceforge.net/>
+
+Reverse raider is a domain scanner that uses brute force wordlist scanning
+for finding a target's subdomains or reverse resolution for a range of IPs.
+
+Reverseraider was developed as part of the "Complemento" penetration testing
+tools that include LetDown and Httsquash. LetDown is a TCP flooder written
+after reading the Fyodor article "TCP Resource Exhaustion and Botched
+Disclosure". Httsquash is an HTTP server scanner, banner grabber, and data
+retriever. It can be used for scanning large ranges of IPs for finding
+devices or HTTP servers.
+
+Usage:
+  reverseraider -d domain | -r range [options]
+Options:
+  -r    range of ipv4 or ipv6 addresses, for reverse scanning
+        examples: 208.67.1.1-254 or 2001:0DB8::1428:57ab-6344
+  -d    domain, for wordlist scanning (example google.com)
+  -w    wordlist file (see wordlists directory...)
+Extra options:
+  -t    max request time, in seconds
+  -P    enable numeric permutation on wordlist (default off)
+
+ DISABLED: From menu drop to a shell leaves you in $HOME rather than in the
+pentest. Add full path. HINT:
+
+# locate wordlist |grep reverseraider
+
+EXAMPLE:
+
+# /pentest/enumeration/complemento/reverseraider/reverseraider -d
+obnosis.com -w
+/pentest/enumeration/complemento/reverseraider/wordlists/fast.list
+------------------------------
+
+SSLScan <http://www.sslscan.com/>
+
+Useful to verify keys and ciphers.
+
+SSLScan is a fast SSL port scanner. SSLScan connects to SSL ports and
+determines what ciphers are supported, which are the servers prefered
+ciphers, which SSL protocols are supported and returns the SSL certificate.
+Client certificates / private key can be configured and output is to text /
+XML.
+
+Command:
+  sslscan [Options] [host:port | host]
+
+Options:
+  --targets=     A file containing a list of hosts to
+                       check.  Hosts can  be supplied  with
+                       ports (i.e. host:port).
+  --no-failed          List only accepted ciphers  (default
+                       is to listing all ciphers).
+  --ssl2               Only check SSLv2 ciphers.
+  --ssl3               Only check SSLv3 ciphers.
+  --tls1               Only check TLSv1 ciphers.
+  --pk=          A file containing the private key or
+                       a PKCS#12  file containing a private
+                       key/certificate pair (as produced by
+                       MSIE and Netscape).
+  --pkpass=  The password for the private  key or
+                       PKCS#12 file.
+  --certs=       A file containing PEM/ASN1 formatted
+                       client certificates.
+  --xml=         Output results to an XML file.
+  --version            Display the program version.
+  --help               Display the  help text  you are  now
+                       reading.
+
+ EXAMPLE:
+
+# sslscan plug.phoenix.az.us
+------------------------------
+
+SCTPscan<http://www.dailymotion.com/video/x2nq3d_frnog-10-philippe-langlois-sctpscan_tech>
+
+SCTPscan is a new tool to scan SCTP endpoints. SCTP is a protocol like TCP
+with builtin support in major OS (Linux kernel 2.6, Solaris 10, FreeBSD 7,
+Mac OS X with kernel extension, ...). SCTP has some very interesting
+features (multihoming, multi-stream, resists well to Denial of Service -
+DoS, high performance). It's used for telecommunication backbone over IP
+(SS7 over IP aka SIGTRAN), Internet2 transfers, Cluster high-speed
+communication.
+
+EXAMPLES:
+
+Scan port 9999 on 192.168.1.24
+
+./sctpscan -l 192.168.1.2 -r 192.168.1.24 -p 9999
+
+Scans for availability of SCTP on 172.17.8.* and portscan any host with SCTP
+stack
+
+./sctpscan -s -l 172.22.1.96 -r 172.17.8
+
+Scans frequently used ports on 172.17.8.*
+
+./sctpscan -s -F -l 172.22.1.96 -r 172.17.8
+
+Scans all class-B network for frequent port
+
+./sctpscan -s -F -r 172.22 -l `ifconfig eth0 | grep 'inet addr:' | cut -d:
+-f2 | cut -d ' ' -f 1 `
+
+Simple verification end to end on the local machine:
+
+./sctpscan -d (ampersand)
+
+./sctpscan -s -l 192.168.1.24 -r 192.168.1 -p 10000
+
+This tool does NOT work behind most NAT (RFC-1918 private addresses). That
+means that most of the routers / firewalls don't know how to NAT SCTP
+packets. Use this tool from a computer having a public IP address.
+------------------------------
+
+Dnsrecon <http://www.aboutus.org/Category:Dnsrecon>
+
+This is a simple tool written for target enumeration during authorized
+penetration test engagements. This tool provides different methods for
+enumerating targets via DNS service.
+
+USAGE:
+ruby dnsrecon.rb
+
+TYPES:
+
+*** Reverse Lookup for Range ***
+ruby dnsrecon.rb -r
+
+*** Top Level Domain Expansion ***
+ruby dnsrecon.rb -tld
+
+*** DNS Host and Domain Bruteforce ***
+ruby dnsrecon.rb -b
+
+*** General DNS Query for NS, SOA and MX Records ***
+ruby dnsrecon.rb -s
+
+*** Execute Zone transfer on each NS server reported ***
+ruby dnsrecon.rb -axfr
+
+*** Enumerates most common SRV Records for a given domain ***
+ruby dnsrecon.rb -srv
+
+ EXAMPLE:
+# ruby dnsrecon.rb -s plug.phoenix.az.us 8.105.29.14
+------------------------------
+
+dnswalk <http://sourceforge.net/projects/dnswalk/>
+
+Usage:  dnswalk domain.name.  (must have a period)
+
+ DISABLED: The shell whines that dnswalk is not installed. Using locate to
+add the full and correct path (and fixing the KDE menu item) is indicated:
+
+EXAMPLE:
+
+#./dnswalk plug.phoenix.az.us.
+
+*Note: You should not be getting a zone transfer here!*
+------------------------------
+
+Brutessh <http://www.edge-security.com/edge-soft.php>
+
+Usage: brutessh.py options
+
+       -h: destination host
+
+       -u: username to force
+
+       -d: password file
+
+       -t: threads (default 12, more could be bad)
+
+
+Example:  ./brutessh.py -h 192.168.1.55 -u root -d mypasswordlist.txt
+
+ EXAMPLE:
+
+# ./brutessh.py -h tomcruise.com -u tom -d
+/pentest/passwords/sshatter/passwords
+------------------------------
+
+tftpbrute.pl <http://www.securiteam.com/tools/6E00P20EKS.html>
+
+usage: perl ./tftpbrute.pl
+example  ./tftpbrute.pl 192.168.66.202 brutefile.txt 100
+
+
+ EXAMPLE:
+
+# ./tftpbrute.pl 192.168.66.202
+/pentest/passwords/tftp-bruteforce/brutefile.txt 100
+------------------------------
+
+Packet Injection:
+
+nemesis <http://nemesis.sourceforge.net/>
+
+Useful for firewall testing.
+
+The Nemesis Project is designed to be a command line-based, portable human
+IP stack for UNIX-like and Windows systems. The suite is broken down by
+protocol and should allow for useful scripting of injected packets from
+simple shell scripts.
+
+# man nemesis
+
+# nemesis ethernet help
+
+Ethernet Usage:
+  ethernet [-v (verbose)] [options]
+
+Ethernet Options:
+  -d
+  -H
+  -M
+  -P
+  -T
+
+ EXAMPLES:
+Check if firewall allows an arbitrary packet carrying a FIN or RST flag:
+
+# nemesis tcp -S 192.168.0.9 -D 11.0.0.27 -fF -x 1066 -y 139
+
+# nemesis tcp -S 192.168.0.9 -D 11.0.0.27 -fR -x 1066 -y 139
+
+Run tcpdump on the other side of the firewall (on the 11.x network) to
+verify that the packets pass through the ruleset. The firewall should block
+packets because the TCP sequence numbers are wrong; nemesis assigns random
+#s. If packets pass through the firewall, a DoS attack could be performed
+against 11.0.0.27 by flooding with RST packets.
+
+Check how the firewall handles ACK packets. Various cracker backdoor tools
+tunnel communication entirely over these packets.
+
+# nemesis tcp -S 192.168.0.9 -D 11.0.0.27 -fA -x 1066 -y 139
+
+We could target UDP connections, instead. Due to the connectionless nature
+of UDP, firewalls generally apply time limits on inactivity once a UDP
+connection has been established. You can verify the firewall UDP time limit
+with the nemesis udp tool using UDP port 135 (NetBIOS traffic). Establish a
+connection between 192.168.0.9 and 11.0.0.27 using netcat. Test a
+five-minute timeout by adding a sleep command; 300 seconds equals five
+minutes.
+
+# sleep 300; nemesis udp -S 192.168.0.9 -D 11.0.0.27 -x 1066 -y 135
+
+If your tcpdump session catches the UDP traffic, the traffic from nemesis
+udp has crossed the firewall so the firewall's timeout period is probably
+longer than five minutes.
+
+Test the firewall reaction to ICMP tunneling programs such as Loki.
+Firewalls should never allow ICMP replies to any ICMP request originating
+from the wan side:
+
+# nemesis icmp -S 192.168.0.9 -D 11.0.0.27 -i 0 -c 0
+------------------------------
+
+icmptx <http://github.com/jakkarth/icmptx/tree/master>
+
+ICMPTX is a program that allows a user with root privledges to create a
+virtual network link between two computers, encapsulating data inside of
+ICMP packets.
+
+EXAMPLE: Thomer <http://thomer.com/icmptx/>
+------------------------------
+
+Tunnel:
+
+udptunnel <http://www1.cs.columbia.edu/%7Elennox/udptunnel/>
+
+UDPTunnel is a small program which can tunnel UDP packets bi-directionally
+over a TCP connection. Its primary purpose (and original motivation) is to
+allow multi-media conferences to traverse a firewall which allows only
+outgoing TCP connections.
+
+Usage: udptunnel -s TCP-port [-r] [-v] UDP-addr/UDP-port[/ttl]
+    or udptunnel -c TCP-addr[/TCP-port] [-r] [-v] UDP-addr/UDP-port[/ttl]
+     -s: Server mode.  Wait for TCP connections on the port.
+     -c: Client mode.  Connect to the given address.
+     -r: RTP mode.  Connect/listen on ports N and N+1 for both UDP and TCP.
+         Port numbers must be even.
+     -v: Verbose mode.  Specify -v multiple times for increased verbosity.
+
+ EXAMPLE:
+
+# udptunnel -s 10.9.4.12/53 -vvv 222.64.91.10/5421
+
+# udptunnel -c 222.64.91/5421 -vvv 10.9.4.12/53
+------------------------------
+
+Sniffers:
+
+driftnet <http://www.ex-parrot.com/%7Echris/driftnet/>
+
+Capture images from network traffic and display them in an X window.
+
+Synopsis: driftnet [options] [filter code]
+
+Options:
+
+  -h               Display this help message.
+  -v               Verbose operation.
+  -i interface     Select the interface on which to listen (default: all
+                   interfaces).
+  -p               Do not put the listening interface into promiscuous mode.
+  -a               Adjunct mode: do not display images on screen, but save
+                   them to a temporary directory and announce their names on
+                   standard output.
+  -m number        Maximum number of images to keep in temporary directory
+                   in adjunct mode.
+  -d directory     Use the named temporary directory.
+  -x prefix        Prefix to use when saving images.
+  -s               Attempt to extract streamed audio data from the network,
+                   in addition to images. At present this supports MPEG data
+                   only.
+  -S               Extract streamed audio but not images.
+  -M command       Use the given command to play MPEG audio data extracted
+                   with the -s option; this should process MPEG frames
+                   supplied on standard input. Default: `mpg123 -'.
+
+ Filter code can be specified after any options in the manner of tcpdump(8).
+The filter code will be evaluated as `tcp and (user filter code)'
+
+You can save images to the current directory by clicking on them.
+
+Adjunct mode is designed to be used by other programs which want to use
+driftnet to gather images from the network. With the -m option, driftnet
+will silently drop images if more than the specified number of images are
+saved in its temporary directory. It is assumed that some other process is
+collecting and deleting the image files.
+
+EXAMPLE:
+
+# ./driftnet
+
+Video driftnet 
+Demo<http://www.youtube.com/v/_NSlPmzAzF0&hl=en&fs=1#%21flashvars#autoplay=1>
+------------------------------
+
+hamster <http://hamster.erratasec.com/help/index.html>
+
+Sidejacking actually sniffs the network traffic to extract the session-id
+from the HTTP cookies. Many web sites use SSL encryption for login pages to
+prevent attackers from seeing the password, but do not use encryption for
+the rest of the site once authenticated. With the session-id, you can gain
+access to the victim's account without the need of username and password.
+
+Ferret-Hamster 
+Video<http://securitytube.net/Sidejacking-using-Ferret-and-Hamster-2-video.aspx>
+
+SideJacking Video <http://www.youtube.com/watch?v=xvqcKa_8z70>
+------------------------------
+
+sslstrip <http://www.thoughtcrime.org/software/sslstrip/>
+
+BlackHat 09 Demo
+Video<https://media.blackhat.com/bh-dc-09/video/Marlinspike/blackhat-dc-09-marlinspike-slide.mov>
+
+   1. Does an MITM on the HTTP connection
+   2. Replaces all the HTTPS links with HTTP ones but remembers the
+links which were changed
+   3. Communicates with the victim client on an HTTP connection for
+any secure link
+   4. Communicates with the legitimate server over HTTPS for the same
+secure link
+   5. Communication is transparently proxied between the victim client
+and the legitimate server
+   6. Images such as the favicon are replaced by images of the
+familiar "secure lock" icon, to build trust
+   7. As the MITM is taking places all passwords, credentials etc are
+stolen without the Client knowing
+
+
+------------------------------
+Fuzzers:
+
+spike <http://www.immunitysec.com/resources-freesoftware>
+
+When you need to analyze a new network protocol for buffer overflows or
+similar weaknesses, the SPIKE is the tool of choice for professionals. While
+it requires a strong knowledge of C to use, it produces results second to
+none in the field. SPIKE is available for the Linux platform only.
+
+Whitepaper <http://www.immunitysec.com/resources-papers.shtml>
+
+Includes splonk:
+
+Plonk <http://www.immunitysec.com/> is tool to reboot windows servers via
+port 445.
+
+Usage: ./plonk target
+
+ EXAMPLE:
+
+# ./plonk nazi.com
+------------------------------
+
+Wireless: We all use Wireless insecurely, don't we?
+
+AirCrack-Ng <http://aircrack-ng.org/>
+
+Your card needs to support packet injection.
+
+Simple WEP Key Cracking Steps:
+
+    * place your card in monitor mode
+    * (fake) authentication
+    * attack and collect IVs
+    * crack wep key from collected IVs
+
+Cracking WEP EXAMPLE:
+
+    Use 3 shells
+    Stop the ath0 device:
+
+# airmon-ng stop ath0
+
+Find your device
+# ifconfig -a
+# ifconfig (device) down
+# macchanger â€“mac 00:01:02:03:04:05 (device)
+
+Start Wireless Card listening for APâ€™s
+# airmon-ng start (device)
+
+Dump the APs
+# airodump-ng (device)
+
+CTRL+C Copy bssid of consenting computer
+# airodump-ng -c 6 -w Exidous â€“bssid (Bssid) (device)
+
+Lets make more data and start the injection process
+# aireplay-ng -l 0 -a (bssid) -h 00:11:22:33:44:55 (device)
+Inject the router: it takes a while to actually inject!
+# aireplay-ng -3 -b (bssid) -h 00:11:22:33:44:55 (device)
+
+Cracking the key
+#aircrack-ng -n 64 â€“bssid (bssid) Exidous-01.cap
+
+Write Down the wep key and reboot to windows.
+
+Now put it in the username and the password without the :
+IE: Wep Key = 33:C7:C6:09:30
+When Entered into username and password it will look like this. 33C7C60930
+
+
+ BlackHat Forums <http://www.blackhat-forums.com/index.php?showforum=30>
+------------------------------
+
+Cowpatty <http://wirelessdefence.org/Contents/coWPAttyMain.htm>
+
+WPA-PSK dictionary attack.
+
+cowpatty: Must supply a list of passphrases in a file with -f or a
+hash file with -d.  Use "-f -" to accept words on stdin.
+
+Usage: cowpatty [options]
+
+        -f      Dictionary file
+        -d      Hash file (genpmk)
+        -r      Packet capture file
+        -s      Network SSID (enclose in quotes if SSID includes spaces)
+        -h      Print this help information and exit
+        -v      Print verbose information (more -v for more verbosity)
+        -V      Print program version and exit
+
+
+ EXAMPLE: Cowpatty cracking a wpa-psk key in 1/2 hour
+
+./cowpatty -r eap-test.dump -f dict -s somethingclever
+
+# /pentest/wireless/cowpatty/genpmk -f /pentest/wireless/cowpatty/dict/dict
+-d SSID -s SSID
+# /pentest/wireless/cowpatty/cowpatty -d SSID -s SSID
+
+This tool can also accept dictionary words from STDIN, allowing us to
+utilize a tool such as John the Ripper to create lots of word permutations
+from a dictionary file:
+
+$ john -wordfile:dictfile -rules -session:johnrestore.dat -stdout:63 | \
+
+cowpatty -r eap-test.dump -f - -s somethingclever
+------------------------------
+
+Forensics:
+
+Need to do low level analysis of an encroached system's dd image? Be sure to
+take full snapshots of all running processes and memory stack first!
+
+Autopsy <http://www.sleuthkit.org/autopsy/index.php>
+
+Other than hexedit and other binary discovery tools, autopsy is excellent.
+
+usage: /usr/bin/autopsy [-c] [-C] [-d evid_locker] [-p port] [remoteaddr]
+  -c: force a cookie in the URL
+  -C: force NO cookie in the URL
+  -d dir: specify the evidence locker directory
+  -i device filesystem mnt: Specify info for live analysis
+  -p port: specify the server port (default: 9999)
+  remoteaddr: specify the host with the browser (default: localhost)
+
+
+ EXAMPLE:
+
+Autopsy User 
+Guide<http://wiki.sleuthkit.org/index.php?title=Autopsy_User%27s_Guide>
+------------------------------
+BackTrack4 KDE Tools:
+
+smb4k <http://smb4k.berlios.de/>
+
+Maps Windows systems via SMB or CIFS
+
+(especially interesting when on public Wireless networks)
+------------------------------
+
+Metasloit <http://metasploit3.com/>
+
+Metasploit provides useful information to people who perform penetration
+testing, IDS signature development, and exploit research. Metasploit is a
+community project managed by Metasploit LLC.
+
+EXAMPLES:
+
+EthicalHacker <http://www.ethicalhacker.net/content/view/137/24/>
+
+SecurityDistro<http://www.securitydistro.com/video-tutorials/132/Metasploit-3-Autopwn.php>
+------------------------------
+
+Services:
+
+Snort <http://www.snort.org/> is enabled from the menu - just add or change
+rules!
+------------------------------
+
+BEef Browser Exploitation Framework <http://www.bindshell.net/tools>
+
+BeEF is the browser exploitation framework.Current modules include the first
+public Inter-protocol Exploit, a traditional browser overflow exploit, port
+scanning, keylogging, clipboard theft and more. The modules are aimed to be
+a representative set of current browser attacks - with the notable exception
+of launching cross-site scripting viruses.
+
+BEef Video <http://www.youtube.com/watch?v=kGX6lCe_EzY>
+
+Dumping Memory Through Command
+Shell<http://darkoperator.blogspot.com/2009/03/dumping-memory-thru-command-shell.html>
+------------------------------
+
+Other services pre-configured from the KDE Menu include Mysql, tftpd, VNC,
+GPSD, PCSCD, ssh, HTTPD. A fully functional wine makes running windows test,
+repair or recovery tools trivial:
+------------------------------
+
+These are just a few of the fun toys available on the Backtrack4 disto.
+Offensive Security provides good documentation:
+
+HowToBT4<http://backtrack.offensive-security.com/index.php/Howto-bt4#BackTrack_4_HowTo_Index>
+
+BackTrack Tools <http://backtrack.offensive-security.com/index.php/Tools>
+BackTrack4 
+Guide<http://www.obnosis.com/www.offensive-security.com/backtrack4-guide-tutorial.pdf>
+
+DISABLED = Intentionally disabled so that some knowledge of networking,
+linux systems is required.
+------------------------------
+Extra: Wireless Keyboard Fun:
+Keykeriki<http://www.remote-exploit.org/Keykeriki.html>
+------------------------------
+
+These are only preliminary examples; your discovery via command line,
+package documentation, and testing will be significantly richer.
+
+Any modern linux professional, developer and user would do well to educate
+themselves properly regarding security. Backtrack4 can swiftly provide a
+good review of the list of OSI "layer up" threats, while demonstrating
+Application "layer down" web and browser issues to good effect. If Offensive
+Security does nothing but inform everyone of the ease with which our systems
+can be exploited, their mission would be worth a *donation*.
+
+By far the most easily exploited is the Layer
+8 <http://en.wikipedia.org/wiki/Layer_8>
+.
+------------------------------
+DISCLAIMER:
+
+Use of any or all of these tools without a signed pentesting agreement,
+outside a lab or test environment, can be considered aggressive attempts to
+exploit secure systems. A sizable NSA federal budget exists to tap networks
+and target crackers. Anyone using any of these tools for destructive
+purposes fully deserves placement in the back page of 2600.com magazine's
+free advertisements for "pen pals from jail". Not everyone gets the
+Mitnick<http://en.wikipedia.org/wiki/Kevin_Mitnick>treatment after
+parole.
+
+Visit your local user groups or start your own educational testing in
+controlled settings. Join me at the Phoenix Linux Users Group
+HackFests<http://plug.obnosis.com/>
+.
